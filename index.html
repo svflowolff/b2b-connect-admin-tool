@@ -5,152 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>B2B Connect – Promotion Manager</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #f5f5f3;
-    --surface: #ffffff;
-    --border: rgba(0,0,0,0.1);
-    --border-med: rgba(0,0,0,0.18);
-    --text: #1a1a1a;
-    --text-muted: #6b6b6b;
-    --text-faint: #999;
-    --green: #16a34a;
-    --green-light: #f0fdf4;
-    --green-text: #166534;
-    --red: #dc2626;
-    --red-light: #fef2f2;
-    --red-text: #991b1b;
-    --amber: #d97706;
-    --amber-light: #fffbeb;
-    --amber-text: #92400e;
-    --blue-light: #eff6ff;
-    --blue-text: #1e40af;
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
-
-  /* TOPBAR */
-  .topbar { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 54px; position: sticky; top: 0; z-index: 10; }
-  .logo { font-size: 15px; font-weight: 600; letter-spacing: 0.08em; color: var(--text); }
-  .logo span { color: var(--green); }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
-  .topbar-sub { font-size: 12px; color: var(--text-muted); }
-  .user-input { padding: 5px 10px; font-size: 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-med); background: var(--bg); color: var(--text); width: 130px; outline: none; }
-  .user-input:focus { border-color: var(--green); }
-
-  /* TABS */
-  .tabs { background: var(--surface); border-bottom: 0.5px solid var(--border); display: flex; padding: 0 24px; position: sticky; top: 54px; z-index: 9; }
-  .tab { padding: 12px 16px; font-size: 13px; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; display: flex; align-items: center; gap: 6px; user-select: none; }
-  .tab:hover { color: var(--text); }
-  .tab.act { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
-  .badge-red { font-size: 10px; padding: 1px 6px; border-radius: 20px; background: var(--red-light); color: var(--red-text); font-weight: 500; }
-  .badge-green { font-size: 10px; padding: 1px 6px; border-radius: 20px; background: var(--green-light); color: var(--green-text); font-weight: 500; }
-
-  /* CONTENT */
-  .content { padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
-  .page { display: none; }
-  .page.show { display: block; }
-  .section-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
-
-  /* STATS */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-  .stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
-  .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-  .stat-value { font-size: 24px; font-weight: 600; color: var(--text); }
-  .stat-value.red { color: var(--red); }
-  .stat-value.amber { color: var(--amber); }
-  .stat-value.green { color: var(--green); }
-
-  /* GRID */
-  .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
-  @media (max-width: 700px) { .main-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } }
-
-  /* PANEL */
-  .panel { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .panel-header { padding: 12px 16px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .panel-title { font-size: 13px; font-weight: 500; }
-  .panel-count { font-size: 11px; color: var(--text-muted); }
-
-  /* FILTERS */
-  .filters { display: flex; gap: 4px; padding: 10px 16px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
-  .fb { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--border-med); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.12s; }
-  .fb.act { background: var(--green); color: #fff; border-color: var(--green); }
-  .fb:hover:not(.act) { background: var(--bg); color: var(--text); }
-  .search-wrap { padding: 8px 16px; border-bottom: 0.5px solid var(--border); }
-  .search-input { width: 100%; padding: 6px 10px; font-size: 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-med); background: var(--bg); color: var(--text); outline: none; }
-  .search-input:focus { border-color: var(--green); }
-
-  /* BRAND LIST */
-  .brand-list { max-height: 460px; overflow-y: auto; }
-  .brand-row { padding: 10px 16px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.1s; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; }
-  .brand-row:last-child { border-bottom: none; }
-  .brand-row:hover { background: var(--bg); }
-  .brand-row.sel { background: var(--bg); }
-  .brand-row.sent-row { opacity: 0.55; }
-  .brand-row.p-critical { border-left-color: var(--red); }
-  .brand-row.p-high { border-left-color: #f59e0b; }
-  .brand-row.p-medium { border-left-color: #3b82f6; }
-  .brand-row.p-low { border-left-color: var(--green); }
-  .brand-row-main { flex: 1; min-width: 0; }
-  .brand-row-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .brand-row-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .score-chip { font-size: 11px; color: var(--text-muted); background: var(--bg); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-  .sent-chip { font-size: 10px; padding: 2px 7px; border-radius: 20px; background: var(--green-light); color: var(--green-text); flex-shrink: 0; white-space: nowrap; }
-
-  /* BADGES */
-  .badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
-  .bc { background: var(--red-light); color: var(--red-text); }
-  .bh { background: var(--amber-light); color: var(--amber-text); }
-  .bm { background: var(--blue-light); color: var(--blue-text); }
-  .bl { background: var(--green-light); color: var(--green-text); }
-
-  /* EMAIL PANEL */
-  .email-body { padding: 16px; }
-  .empty-email { padding: 52px 16px; text-align: center; color: var(--text-faint); font-size: 13px; line-height: 1.7; }
-  .empty-icon { font-size: 28px; opacity: 0.2; margin-bottom: 10px; }
-  .ef { margin-bottom: 10px; }
-  .el { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
-  .ev { font-size: 12px; background: var(--bg); padding: 7px 10px; border-radius: var(--radius-sm); line-height: 1.5; }
-  .email-text { font-size: 12px; background: var(--bg); padding: 12px 14px; border-radius: var(--radius-sm); line-height: 1.9; white-space: pre-wrap; user-select: text; min-height: 180px; max-height: 300px; overflow-y: auto; }
-  .regen-btn { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 0.5px solid var(--border-med); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.12s; }
-  .regen-btn:hover { background: var(--bg); color: var(--text); }
-
-  .action-row { display: flex; gap: 8px; margin-top: 10px; }
-  .copy-btn { flex: 1; padding: 8px; font-size: 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--green); background: transparent; color: var(--green); cursor: pointer; font-weight: 500; transition: background 0.12s; }
-  .copy-btn:hover { background: var(--green-light); }
-  .copy-btn.ok { background: var(--green-light); color: var(--green-text); }
-  .sent-btn { flex: 1; padding: 8px; font-size: 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-med); background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 500; transition: all 0.12s; }
-  .sent-btn:hover { background: var(--bg); }
-  .sent-btn.marked { background: var(--green-light); color: var(--green-text); border-color: var(--green); }
-
-  .sent-info { margin-top: 8px; padding: 8px 10px; background: var(--green-light); border-radius: var(--radius-sm); font-size: 11px; color: var(--green-text); }
-  .brand-detail { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 0.5px solid var(--border); }
-  .detail-name { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-  .detail-meta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .dm { font-size: 11px; color: var(--text-muted); }
-  .dm strong { color: var(--text); }
-
-  /* CAMPAIGNS */
-  .warn-banner { background: var(--amber-light); border: 0.5px solid #fcd34d; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-  .warn-text { font-size: 12px; color: var(--amber-text); }
-  .warn-text strong { color: #78350f; }
-  .camp-filters { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
-  .camp-list { display: flex; flex-direction: column; gap: 8px; }
-  .camp-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 16px; border-left: 3px solid transparent; }
-  .camp-card.c-expired { border-left-color: var(--red); }
-  .camp-card.c-soon { border-left-color: #f59e0b; }
-  .camp-card.c-active { border-left-color: var(--green); }
-  .camp-row1 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
-  .camp-brand { font-size: 13px; font-weight: 500; }
-  .camp-status { font-size: 10px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
-  .cs-active { background: var(--green-light); color: var(--green-text); }
-  .cs-warn { background: var(--amber-light); color: var(--amber-text); }
-  .cs-expired { background: var(--red-light); color: var(--red-text); }
-  .camp-title { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
-  .camp-dates { font-size: 11px; color: var(--text-muted); }
-  .camp-dates span { color: var(--text); }
-  .empty-state { padding: 32px; text-align: center; font-size: 12px; color: var(--text-muted); }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f5f5f3;--surface:#fff;--border:rgba(0,0,0,0.1);--border-med:rgba(0,0,0,0.18);
+  --text:#1a1a1a;--muted:#6b6b6b;--faint:#999;
+  --green:#16a34a;--gl:#f0fdf4;--gt:#166534;
+  --red:#dc2626;--rl:#fef2f2;--rt:#991b1b;
+  --amber:#d97706;--al:#fffbeb;--at:#92400e;
+  --bl:#eff6ff;--bt:#1e40af;
+  --r:10px;--rs:6px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:10;}
+.logo{font-size:15px;font-weight:600;letter-spacing:.08em;}.logo span{color:var(--green);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-sub{font-size:12px;color:var(--muted);}
+.user-input{padding:5px 10px;font-size:12px;border-radius:var(--rs);border:0.5px solid var(--border-med);background:var(--bg);color:var(--text);width:130px;outline:none;}
+.user-input:focus{border-color:var(--green);}
+.tabs{background:var(--surface);border-bottom:0.5px solid var(--border);display:flex;padding:0 24px;position:sticky;top:54px;z-index:9;}
+.tab{padding:12px 16px;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;display:flex;align-items:center;gap:6px;user-select:none;}
+.tab:hover{color:var(--text);}
+.tab.act{color:var(--green);border-bottom-color:var(--green);font-weight:500;}
+.br{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--rl);color:var(--rt);font-weight:500;}
+.bg{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--gl);color:var(--gt);font-weight:500;}
+.content{padding:20px 24px;max-width:1200px;margin:0 auto;}
+.page{display:none;}.page.show{display:block;}
+.stitle{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.sc{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.sl{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.sv{font-size:24px;font-weight:600;color:var(--text);}
+.sv.red{color:var(--red);}.sv.amber{color:var(--amber);}.sv.green{color:var(--green);}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+@media(max-width:700px){.mgrid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(2,1fr)}}
+.panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.ph{padding:12px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.pt{font-size:13px;font-weight:500;}.pc{font-size:11px;color:var(--muted);}
+.score-legend{font-size:11px;color:var(--muted);padding:8px 16px;border-bottom:0.5px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:4px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.filters{display:flex;gap:4px;padding:10px 16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;}
+.fb{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--border-med);background:transparent;color:var(--muted);cursor:pointer;transition:all .12s;}
+.fb.act{background:var(--green);color:#fff;border-color:var(--green);}
+.fb:hover:not(.act){background:var(--bg);color:var(--text);}
+.sw{padding:8px 16px;border-bottom:0.5px solid var(--border);}
+.si{width:100%;padding:6px 10px;font-size:12px;border-radius:var(--rs);border:0.5px solid var(--border-med);background:var(--bg);color:var(--text);outline:none;}
+.si:focus{border-color:var(--green);}
+.blist{max-height:460px;overflow-y:auto;}
+.brow{padding:10px 16px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:10px;border-left:3px solid transparent;}
+.brow:last-child{border-bottom:none;}.brow:hover{background:var(--bg);}.brow.sel{background:var(--bg);}
+.brow.sent-r{opacity:.55;}
+.brow.p-critical{border-left-color:var(--red);}.brow.p-high{border-left-color:#f59e0b;}
+.brow.p-medium{border-left-color:#3b82f6;}.brow.p-low{border-left-color:var(--green);}
+.brm{flex:1;min-width:0;}
+.brn{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brs{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chip{font-size:11px;color:var(--muted);background:var(--bg);padding:2px 6px;border-radius:4px;flex-shrink:0;font-variant-numeric:tabular-nums;}
+.schip{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--gl);color:var(--gt);flex-shrink:0;white-space:nowrap;}
+.badge{font-size:10px;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.bc{background:var(--rl);color:var(--rt);}.bh{background:var(--al);color:var(--at);}
+.bm{background:var(--bl);color:var(--bt);}.bl2{background:var(--gl);color:var(--gt);}
+.eb{padding:16px;}
+.ee{padding:52px 16px;text-align:center;color:var(--faint);font-size:13px;line-height:1.7;}
+.ei{font-size:28px;opacity:.2;margin-bottom:10px;}
+.ef{margin-bottom:10px;}
+.el{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
+.ev{font-size:12px;background:var(--bg);padding:7px 10px;border-radius:var(--rs);line-height:1.5;}
+.et{font-size:12px;background:var(--bg);padding:12px 14px;border-radius:var(--rs);line-height:1.9;white-space:pre-wrap;user-select:text;min-height:180px;max-height:300px;overflow-y:auto;}
+.rb{font-size:11px;padding:2px 8px;border-radius:20px;border:0.5px solid var(--border-med);background:transparent;color:var(--muted);cursor:pointer;transition:all .12s;}
+.rb:hover{background:var(--bg);color:var(--text);}
+.ar{display:flex;gap:8px;margin-top:10px;}
+.cb{flex:1;padding:8px;font-size:12px;border-radius:var(--rs);border:0.5px solid var(--green);background:transparent;color:var(--green);cursor:pointer;font-weight:500;transition:background .12s;}
+.cb:hover{background:var(--gl);}.cb.ok{background:var(--gl);color:var(--gt);}
+.sb{flex:1;padding:8px;font-size:12px;border-radius:var(--rs);border:0.5px solid var(--border-med);background:transparent;color:var(--muted);cursor:pointer;font-weight:500;transition:all .12s;}
+.sb:hover{background:var(--bg);}.sb.mk{background:var(--gl);color:var(--gt);border-color:var(--green);}
+.si2{margin-top:8px;padding:8px 10px;background:var(--gl);border-radius:var(--rs);font-size:11px;color:var(--gt);}
+.bd{margin-bottom:12px;padding-bottom:12px;border-bottom:0.5px solid var(--border);}
+.dn{font-size:13px;font-weight:500;margin-bottom:6px;}
+.dm2{display:flex;gap:12px;flex-wrap:wrap;}
+.dm{font-size:11px;color:var(--muted);}.dm strong{color:var(--text);}
+.wb{background:var(--al);border:0.5px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.wt{font-size:12px;color:var(--at);}.wt strong{color:#78350f;}
+.cf{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}
+.cl{display:flex;flex-direction:column;gap:8px;}
+.cc{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:12px 16px;border-left:3px solid transparent;}
+.cc.ce{border-left-color:var(--red);}.cc.cs{border-left-color:#f59e0b;}.cc.ca{border-left-color:var(--green);}
+.cr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;}
+.cb2{font-size:13px;font-weight:500;}
+.cs2{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.csa{background:var(--gl);color:var(--gt);}.csw{background:var(--al);color:var(--at);}.cse{background:var(--rl);color:var(--rt);}
+.ct{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.cd{font-size:11px;color:var(--muted);}.cd span{color:var(--text);}
+.es{padding:32px;text-align:center;font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -158,29 +104,31 @@
 <div class="topbar">
   <div class="logo">B2B <span>CONNECT</span></div>
   <div class="topbar-right">
-    <input class="user-input" id="username-input" type="text" placeholder="Dein Name..." title="Name für Versand-Tracking" />
+    <input class="user-input" id="uname" type="text" placeholder="Dein Name..." />
     <div class="topbar-sub">Promotion Manager</div>
   </div>
 </div>
 
 <div class="tabs">
   <div class="tab act" onclick="switchTab('brands',this)">Marken & E-Mail</div>
-  <div class="tab" onclick="switchTab('campaigns',this)">Kampagnen <span class="badge-red" id="warn-count">–</span></div>
-  <div class="tab" onclick="switchTab('sent',this)">Versendet <span class="badge-green" id="sent-count">0</span></div>
+  <div class="tab" onclick="switchTab('campaigns',this)">Kampagnen <span class="br" id="wc">–</span></div>
+  <div class="tab" onclick="switchTab('sent',this)">Versendet <span class="bg" id="sc2">0</span></div>
 </div>
 
 <div class="content">
-
-  <!-- MARKEN -->
   <div class="page show" id="page-brands">
-    <div class="section-title">Übersicht</div>
-    <div class="stats-row" id="stats-row"></div>
-    <div class="section-title">Marken & E-Mail-Assistent</div>
-    <div class="main-grid">
+    <div class="stitle">Übersicht</div>
+    <div class="stats-row" id="stats"></div>
+    <div class="stitle">Marken & E-Mail-Assistent</div>
+    <div class="mgrid">
       <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Marken nach Priorität</span>
-          <span class="panel-count" id="pcount"></span>
+        <div class="ph"><span class="pt">Marken nach Priorität</span><span class="pc" id="pc"></span></div>
+        <div class="score-legend">
+          <span style="font-weight:600;color:#1a1a1a">Score:</span>
+          <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>≥5.5 Kritisch</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>4.5–5.4 Hoch</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>3.5–4.4 Mittel</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>&lt;3.5 OK</div>
         </div>
         <div class="filters">
           <button class="fb act" onclick="setF('all',this)">Alle</button>
@@ -189,229 +137,202 @@
           <button class="fb" onclick="setF('medium',this)">Mittel</button>
           <button class="fb" onclick="setF('low',this)">OK</button>
         </div>
-        <div class="search-wrap">
-          <input class="search-input" type="text" placeholder="Marke suchen..." oninput="setS(this.value)" />
-        </div>
-        <div class="brand-list" id="brand-list"></div>
+        <div class="sw"><input class="si" type="text" placeholder="Marke suchen..." oninput="setS(this.value)"/></div>
+        <div class="blist" id="bl"></div>
       </div>
-      <div class="panel" id="email-panel">
-        <div class="panel-header"><span class="panel-title">E-Mail-Vorlage</span></div>
-        <div class="email-body">
-          <div class="empty-email"><div class="empty-icon">✉</div>Marke auswählen um<br>Vorlage zu generieren</div>
-        </div>
+      <div class="panel" id="ep">
+        <div class="ph"><span class="pt">E-Mail-Vorlage</span></div>
+        <div class="eb"><div class="ee"><div class="ei">✉</div>Marke auswählen um<br>Vorlage zu generieren</div></div>
       </div>
     </div>
   </div>
 
-  <!-- KAMPAGNEN -->
   <div class="page" id="page-campaigns">
-    <div class="warn-banner" id="warn-banner"></div>
-    <div class="camp-filters" id="camp-filter-btns">
+    <div class="wb" id="wb"></div>
+    <div class="cf" id="cfb">
       <button class="fb act" onclick="setCF('all',this)">Alle</button>
       <button class="fb" onclick="setCF('warn',this)">Warnung</button>
       <button class="fb" onclick="setCF('active',this)">Aktiv</button>
       <button class="fb" onclick="setCF('expired',this)">Abgelaufen</button>
     </div>
-    <div class="camp-list" id="camp-list"></div>
+    <div class="cl" id="camp-list"></div>
   </div>
 
-  <!-- VERSENDET -->
   <div class="page" id="page-sent">
-    <div class="section-title">Versendete E-Mails</div>
-    <div class="camp-list" id="sent-list"></div>
+    <div class="stitle">Versendete E-Mails</div>
+    <div class="cl" id="sent-list"></div>
   </div>
-
 </div>
 
 <script>
-const BRANDS=[{"brand":"Fynch-Hatton Belts (Bazlen GmbH)","score":4.6,"email":"marketing@bazlen.com","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Tamaris Belts (Bazlen GmbH)","score":5.0,"email":"marketing@bazlen.com","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Hirschkogel [Esgano]","score":5.0,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Hoopah [Esgano]","score":5.03,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Tonno & Panna (WY Fashion)","score":5.03,"email":"j.jansen@fashion-pure.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Calvin Smith [Esgano]","score":5.07,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Charlotte of Sweden [Esgano]","score":5.07,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Stexx [Esgano]","score":5.1,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Aigner (Stoeckel & Grimmler)","score":5.13,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Esprit (Stoeckel & Grimmler)","score":5.17,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Musterring (Stoeckel & Grimmler)","score":5.17,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Tom Tailor (Stoeckel & Grimmler)","score":5.23,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Risy & Jerfs (WY Fashion)","score":5.27,"email":"j.jansen@fashion-pure.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Sportalm (Stoeckel & Grimmler)","score":5.27,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Cinque (ETLON Gruppe)","score":5.33,"email":"s.romano@monti-fashion.com","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Tom Tailor (ETLON Gruppe)","score":5.33,"email":"s.romano@monti-fashion.com","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Tom Tailor [Supremo Shoes]","score":5.43,"email":"marketing@supremo-shoes.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Joop (Stoeckel & Grimmler)","score":5.5,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Emily Van den Bergh (WY Fashion)","score":5.53,"email":"j.jansen@fashion-pure.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Bergans International [Re Order]","score":5.63,"email":"mike.naujokat@bergans.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"Kleinigkeit","score":5.73,"email":"jan@kleinigkeit.de","lastCampaign":null,"lastVideo":null,"hasVideo":false,"priority":"critical"},{"brand":"LPO","score":2.27,"email":"r.reissner@lineaprimero.de","lastCampaign":"2026-01-26","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"B.BELT (Bazlen GmbH)","score":3.27,"email":"marketing@bazlen.com","lastCampaign":"2026-02-19","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"super.natural","score":3.27,"email":"marketing@sn-europe.com","lastCampaign":"2026-03-15","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Gardeur DOB","score":4.07,"email":"a.teske@gardeur.de","lastCampaign":"2025-07-28","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Heidekönigin [DIY]","score":4.37,"email":"antina.wolff@heidekoenigin.de","lastCampaign":"2025-08-26","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Grüezi bag [DIY]","score":4.47,"email":"markus@gz-bag.de","lastCampaign":"2025-11-11","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"elkline [Yachticon]","score":4.5,"email":"hillers@elkline.de","lastCampaign":"2025-07-19","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Bergans International [Pre Order]","score":4.5,"email":"mike.naujokat@bergans.de","lastCampaign":"2026-01-15","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Authentic Style","score":4.6,"email":"b2b@authentic-style.de","lastCampaign":"2026-03-02","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Eagle Creek Europe Ltd. [INTL]","score":4.67,"email":"marketing@eaglecreek.eu","lastCampaign":"2025-06-18","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Sieber - Fabrizio","score":4.7,"email":"c.haagn@fabrizio.de","lastCampaign":"2026-02-04","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Salt and Pepper","score":4.73,"email":"sandor.birkheuer@kids-park.de","lastCampaign":"2025-06-25","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Mustang Belts (Bazlen GmbH)","score":4.8,"email":"marketing@bazlen.com","lastCampaign":"2024-08-07","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Andrea Conti [Esgano]","score":4.9,"email":"tobias.engl@esgano.de","lastCampaign":"2025-09-03","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Vanzetti (Bazlen GmbH)","score":5.07,"email":"marketing@bazlen.com","lastCampaign":"2025-10-06","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Lieblingsstück (Nitzsche Fashion GmbH)","score":5.07,"email":"sebastian.kleinert@Nitzsche-fashion.com","lastCampaign":"2026-03-25","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Gardeur HAKA","score":5.1,"email":"a.teske@gardeur.de","lastCampaign":"2025-04-23","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"bella dahl (Fashion Roomers)","score":5.17,"email":"belladahl@fashionroomers.com","lastCampaign":"2026-02-25","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Maul Sport","score":5.17,"email":"f.hamidzada@maul-sport.de","lastCampaign":"2024-11-26","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Palm Beach (Nitzsche Fashion GmbH)","score":5.2,"email":"sebastian.kleinert@Nitzsche-fashion.com","lastCampaign":"2023-09-14","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Gardeur G1920","score":5.23,"email":"a.teske@gardeur.de","lastCampaign":"2023-12-09","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Five Fellas","score":5.43,"email":"uta.taaken@five-fellas.de","lastCampaign":"2024-08-26","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Armas","score":5.57,"email":"edmond.e@armas.at","lastCampaign":"2023-10-23","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Monti Gürtel (ETLON Group)","score":5.6,"email":"s.romano@monti-fashion.com","lastCampaign":"2023-08-23","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Schöner Wohnen (Stoeckel & Grimmler)","score":5.73,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":"2024-12-17","lastVideo":null,"hasVideo":false,"priority":"high"},{"brand":"Seidenfalter - Prince Bowtie","score":6.1,"email":"controlling@seidenfalter.de","lastCampaign":null,"lastVideo":"2023-10-25","hasVideo":true,"priority":"high"},{"brand":"MILESTONE","score":6.33,"email":"martina.liebhard@milestone-jackets.com","lastCampaign":"2024-06-24","lastVideo":"2024-04-25","hasVideo":true,"priority":"high"},{"brand":"Miss Goodlife","score":6.13,"email":"esther.fahrendorf@miss-goodlife.de","lastCampaign":"2025-07-11","lastVideo":"2025-04-10","hasVideo":true,"priority":"medium"}];
+const BRANDS=[{"brand":"MILESTONE","score":6.3,"email":"martina.liebhard@milestone-jackets.com","lastCampaign":"2024-06-24","lastVideo":"2024-04-25","daysSince":666,"hasVideo":true,"priority":"critical"},{"brand":"Miss Goodlife","score":6.1,"email":"esther.fahrendorf@miss-goodlife.de","lastCampaign":"2025-07-11","lastVideo":"2025-04-10","daysSince":284,"hasVideo":true,"priority":"critical"},{"brand":"Seidenfalter - Prince Bowtie","score":6.1,"email":"controlling@seidenfalter.de","lastCampaign":null,"lastVideo":"2023-10-25","daysSince":9999,"hasVideo":true,"priority":"critical"},{"brand":"Schöner Wohnen (Stoeckel & Grimmler)","score":5.7,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":"2024-12-17","lastVideo":null,"daysSince":490,"hasVideo":false,"priority":"critical"},{"brand":"Kleinigkeit","score":5.7,"email":"jan@kleinigkeit.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"critical"},{"brand":"Bergans International [Re Order]","score":5.6,"email":"mike.naujokat@bergans.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"critical"},{"brand":"Monti Gürtel (ETLON Group)","score":5.6,"email":"s.romano@monti-fashion.com","lastCampaign":"2023-08-23","lastVideo":null,"daysSince":972,"hasVideo":false,"priority":"critical"},{"brand":"Armas","score":5.6,"email":"edmond.e@armas.at","lastCampaign":"2023-10-23","lastVideo":null,"daysSince":911,"hasVideo":false,"priority":"critical"},{"brand":"Emily Van den Bergh (WY Fashion)","score":5.5,"email":"j.jansen@fashion-pure.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"critical"},{"brand":"Joop (Stoeckel & Grimmler)","score":5.5,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"critical"},{"brand":"Tom Tailor [Supremo Shoes]","score":5.4,"email":"marketing@supremo-shoes.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Five Fellas","score":5.4,"email":"uta.taaken@five-fellas.de","lastCampaign":"2024-08-26","lastVideo":null,"daysSince":603,"hasVideo":false,"priority":"high"},{"brand":"Cinque (ETLON Gruppe)","score":5.3,"email":"s.romano@monti-fashion.com","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Tom Tailor (ETLON Gruppe)","score":5.3,"email":"s.romano@monti-fashion.com","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Risy & Jerfs (WY Fashion)","score":5.3,"email":"j.jansen@fashion-pure.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Sportalm (Stoeckel & Grimmler)","score":5.3,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Gardeur G1920","score":5.2,"email":"a.teske@gardeur.de","lastCampaign":"2023-12-09","lastVideo":null,"daysSince":864,"hasVideo":false,"priority":"high"},{"brand":"Tom Tailor (Stoeckel & Grimmler)","score":5.2,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Palm Beach (Nitzsche Fashion GmbH)","score":5.2,"email":"sebastian.kleinert@Nitzsche-fashion.com","lastCampaign":"2023-09-14","lastVideo":null,"daysSince":950,"hasVideo":false,"priority":"high"},{"brand":"bella dahl (Fashion Roomers)","score":5.2,"email":"belladahl@fashionroomers.com","lastCampaign":"2026-02-25","lastVideo":null,"daysSince":55,"hasVideo":false,"priority":"high"},{"brand":"Maul Sport","score":5.2,"email":"f.hamidzada@maul-sport.de","lastCampaign":"2024-11-26","lastVideo":null,"daysSince":511,"hasVideo":false,"priority":"high"},{"brand":"Esprit (Stoeckel & Grimmler)","score":5.2,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Musterring (Stoeckel & Grimmler)","score":5.2,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Aigner (Stoeckel & Grimmler)","score":5.1,"email":"MJackwerth@stoeckel-grimmler.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Gardeur HAKA","score":5.1,"email":"a.teske@gardeur.de","lastCampaign":"2025-04-23","lastVideo":null,"daysSince":363,"hasVideo":false,"priority":"high"},{"brand":"Stexx [Esgano]","score":5.1,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Vanzetti (Bazlen GmbH)","score":5.1,"email":"marketing@bazlen.com","lastCampaign":"2025-10-06","lastVideo":null,"daysSince":197,"hasVideo":false,"priority":"high"},{"brand":"Lieblingsstück (Nitzsche Fashion GmbH)","score":5.1,"email":"sebastian.kleinert@Nitzsche-fashion.com","lastCampaign":"2026-03-25","lastVideo":null,"daysSince":27,"hasVideo":false,"priority":"high"},{"brand":"Calvin Smith [Esgano]","score":5.1,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Charlotte of Sweden [Esgano]","score":5.1,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Hoopah [Esgano]","score":5.0,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Tonno & Panna (WY Fashion)","score":5.0,"email":"j.jansen@fashion-pure.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Tamaris Belts (Bazlen GmbH)","score":5.0,"email":"marketing@bazlen.com","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Hirschkogel [Esgano]","score":5.0,"email":"tobias.engl@esgano.de","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Andrea Conti [Esgano]","score":4.9,"email":"tobias.engl@esgano.de","lastCampaign":"2025-09-03","lastVideo":null,"daysSince":230,"hasVideo":false,"priority":"high"},{"brand":"Mustang Belts (Bazlen GmbH)","score":4.8,"email":"marketing@bazlen.com","lastCampaign":"2024-08-07","lastVideo":null,"daysSince":622,"hasVideo":false,"priority":"high"},{"brand":"Salt and Pepper","score":4.7,"email":"sandor.birkheuer@kids-park.de","lastCampaign":"2025-06-25","lastVideo":null,"daysSince":300,"hasVideo":false,"priority":"high"},{"brand":"Sieber - Fabrizio","score":4.7,"email":"c.haagn@fabrizio.de","lastCampaign":"2026-02-04","lastVideo":null,"daysSince":76,"hasVideo":false,"priority":"high"},{"brand":"Eagle Creek Europe Ltd. [INTL]","score":4.7,"email":"marketing@eaglecreek.eu","lastCampaign":"2025-06-18","lastVideo":null,"daysSince":307,"hasVideo":false,"priority":"high"},{"brand":"Fynch-Hatton Belts (Bazlen GmbH)","score":4.6,"email":"marketing@bazlen.com","lastCampaign":null,"lastVideo":null,"daysSince":9999,"hasVideo":false,"priority":"high"},{"brand":"Authentic Style","score":4.6,"email":"b2b@authentic-style.de","lastCampaign":"2026-03-02","lastVideo":null,"daysSince":50,"hasVideo":false,"priority":"high"},{"brand":"elkline [Yachticon]","score":4.5,"email":"hillers@elkline.de","lastCampaign":"2025-07-19","lastVideo":null,"daysSince":276,"hasVideo":false,"priority":"high"},{"brand":"Bergans International [Pre Order]","score":4.5,"email":"mike.naujokat@bergans.de","lastCampaign":"2026-01-15","lastVideo":null,"daysSince":96,"hasVideo":false,"priority":"high"},{"brand":"Grüezi bag [DIY]","score":4.5,"email":"markus@gz-bag.de","lastCampaign":"2025-11-11","lastVideo":null,"daysSince":161,"hasVideo":false,"priority":"high"},{"brand":"Heidekönigin [DIY]","score":4.4,"email":"antina.wolff@heidekoenigin.de","lastCampaign":"2025-08-26","lastVideo":null,"daysSince":238,"hasVideo":false,"priority":"medium"},{"brand":"Gardeur DOB","score":4.1,"email":"a.teske@gardeur.de","lastCampaign":"2025-07-28","lastVideo":null,"daysSince":267,"hasVideo":false,"priority":"medium"},{"brand":"B.BELT (Bazlen GmbH)","score":3.3,"email":"marketing@bazlen.com","lastCampaign":"2026-02-19","lastVideo":null,"daysSince":61,"hasVideo":false,"priority":"low"},{"brand":"super.natural","score":3.3,"email":"marketing@sn-europe.com","lastCampaign":"2026-03-15","lastVideo":null,"daysSince":37,"hasVideo":false,"priority":"low"},{"brand":"LPO","score":2.3,"email":"r.reissner@lineaprimero.de","lastCampaign":"2026-01-26","lastVideo":null,"daysSince":85,"hasVideo":false,"priority":"low"}];
 
-const CAMPAIGNS={"super.natural":{"status":"active","endDate":"2026-04-28","daysLeft":7,"title":"Fresh Season. New Energy.","warn":true},"Alpha Industries":{"status":"expired","endDate":"2026-04-14","daysLeft":-7,"title":"SS26","warn":true},"Lieblingsstück (Nitzsche Fashion GmbH)":{"status":"expired","endDate":"2026-03-31","daysLeft":-21,"title":"Party time!","warn":true},"Authentic Style":{"status":"expired","endDate":"2026-03-12","daysLeft":-40,"title":"A/W 2026","warn":true},"bella dahl (Fashion Roomers)":{"status":"expired","endDate":"2026-02-28","daysLeft":-52,"title":"made with love 2","warn":true},"B.BELT (Bazlen GmbH)":{"status":"expired","endDate":"2026-02-25","daysLeft":-55,"title":"New Collection 2026","warn":true},"Sieber - Fabrizio":{"status":"expired","endDate":"2026-02-10","daysLeft":-70,"title":"...More than just luggage!","warn":true},"LPO":{"status":"expired","endDate":"2026-02-03","daysLeft":-77,"title":"Come see what's happening","warn":true},"Bergans International [Pre Order]":{"status":"expired","endDate":"2026-01-15","daysLeft":-96,"title":"Bergans – Embracing the winter","warn":true},"Grüezi bag [DIY]":{"status":"expired","endDate":"2025-11-17","daysLeft":-155,"title":"AW25","warn":true},"Vanzetti (Bazlen GmbH)":{"status":"expired","endDate":"2025-10-14","daysLeft":-189,"title":"Vanzetti all year","warn":true},"Andrea Conti [Esgano]":{"status":"expired","endDate":"2025-09-10","daysLeft":-223,"title":"Esgano 2025","warn":true},"Heidekönigin [DIY]":{"status":"expired","endDate":"2025-09-03","daysLeft":-230,"title":"Autumn Winter","warn":true},"Gardeur DOB":{"status":"expired","endDate":"2025-08-06","daysLeft":-258,"title":"Gardeur DOB SS2025","warn":true},"elkline [Yachticon]":{"status":"expired","endDate":"2025-07-26","daysLeft":-269,"title":"ELKLINE Summer 2025","warn":true},"Miss Goodlife":{"status":"expired","endDate":"2025-07-18","daysLeft":-277,"title":"Miss Goodlife FS 2025","warn":true},"Salt and Pepper":{"status":"expired","endDate":"2025-07-03","daysLeft":-292,"title":"Salt and Peper","warn":true},"Eagle Creek Europe Ltd. [INTL]":{"status":"expired","endDate":"2025-06-24","daysLeft":-301,"title":"Vacations 2025","warn":true},"Gardeur HAKA":{"status":"expired","endDate":"2025-04-29","daysLeft":-357,"title":"Gardeur HAKA FS25","warn":true},"Schöner Wohnen (Stoeckel & Grimmler)":{"status":"expired","endDate":"2024-12-23","daysLeft":-484,"title":"Schöner Wohnen","warn":true},"Maul Sport":{"status":"expired","endDate":"2024-12-02","daysLeft":-505,"title":"Maul Sport","warn":true},"Five Fellas":{"status":"expired","endDate":"2024-08-27","daysLeft":-602,"title":"Five Fellas","warn":true},"Mustang Belts (Bazlen GmbH)":{"status":"expired","endDate":"2024-08-11","daysLeft":-618,"title":"Mustang Belts","warn":true},"MILESTONE":{"status":"expired","endDate":"2024-06-30","daysLeft":-660,"title":"Milestone SS24","warn":true},"Gardeur G1920":{"status":"expired","endDate":"2023-12-10","daysLeft":-863,"title":"Gardeur G1920","warn":true},"Armas":{"status":"expired","endDate":"2023-10-29","daysLeft":-905,"title":"Armas Vienna","warn":true},"Palm Beach (Nitzsche Fashion GmbH) (PB Bade- und Freizeitmoden GmbH)":{"status":"expired","endDate":"2023-09-25","daysLeft":-939,"title":"PALM BEACH","warn":true},"Monti Gürtel (ETLON Group)":{"status":"expired","endDate":"2023-08-30","daysLeft":-965,"title":"MONTI Gürtel - Brand der Woche","warn":true}};
+const CAMPAIGNS={"super.natural":{"status":"active","endDate":"2026-04-28","daysLeft":7,"title":"Fresh Season. New Energy.","warn":true},"Alpha Industries":{"status":"expired","endDate":"2026-04-14","daysLeft":-7,"title":"SS26","warn":true},"Lieblingsstück (Nitzsche Fashion GmbH)":{"status":"expired","endDate":"2026-03-31","daysLeft":-21,"title":"Party time!","warn":true},"Authentic Style":{"status":"expired","endDate":"2026-03-12","daysLeft":-40,"title":"A/W 2026","warn":true},"bella dahl (Fashion Roomers)":{"status":"expired","endDate":"2026-02-28","daysLeft":-52,"title":"made with love 2","warn":true},"B.BELT (Bazlen GmbH)":{"status":"expired","endDate":"2026-02-25","daysLeft":-55,"title":"New Collection 2026","warn":true},"Sieber - Fabrizio":{"status":"expired","endDate":"2026-02-10","daysLeft":-70,"title":"...More than just luggage!","warn":true},"LPO":{"status":"expired","endDate":"2026-02-03","daysLeft":-77,"title":"Come see what's happening","warn":true},"Bergans International [Pre Order]":{"status":"expired","endDate":"2026-01-15","daysLeft":-96,"title":"Bergans – Embracing the winter","warn":true},"Grüezi bag [DIY]":{"status":"expired","endDate":"2025-11-17","daysLeft":-155,"title":"AW25","warn":true},"Vanzetti (Bazlen GmbH)":{"status":"expired","endDate":"2025-10-14","daysLeft":-189,"title":"Vanzetti all year","warn":true},"Andrea Conti [Esgano]":{"status":"expired","endDate":"2025-09-10","daysLeft":-223,"title":"Esgano 2025","warn":true},"Heidekönigin [DIY]":{"status":"expired","endDate":"2025-09-03","daysLeft":-230,"title":"Autumn Winter","warn":true},"Gardeur DOB":{"status":"expired","endDate":"2025-08-06","daysLeft":-258,"title":"Gardeur DOB SS2025","warn":true},"elkline [Yachticon]":{"status":"expired","endDate":"2025-07-26","daysLeft":-269,"title":"ELKLINE Summer 2025","warn":true},"Miss Goodlife":{"status":"expired","endDate":"2025-07-18","daysLeft":-277,"title":"Miss Goodlife FS 2025","warn":true},"Salt and Pepper":{"status":"expired","endDate":"2025-07-03","daysLeft":-292,"title":"Salt and Peper","warn":true},"Eagle Creek Europe Ltd. [INTL]":{"status":"expired","endDate":"2025-06-24","daysLeft":-301,"title":"Vacations 2025","warn":true},"Gardeur HAKA":{"status":"expired","endDate":"2025-04-29","daysLeft":-357,"title":"Gardeur HAKA FS25","warn":true},"Schöner Wohnen (Stoeckel & Grimmler)":{"status":"expired","endDate":"2024-12-23","daysLeft":-484,"title":"Schöner Wohnen","warn":true},"Maul Sport":{"status":"expired","endDate":"2024-12-02","daysLeft":-505,"title":"Maul Sport","warn":true},"Five Fellas":{"status":"expired","endDate":"2024-08-27","daysLeft":-602,"title":"Five Fellas","warn":true},"Mustang Belts (Bazlen GmbH)":{"status":"expired","endDate":"2024-08-11","daysLeft":-618,"title":"Mustang Belts","warn":true},"MILESTONE":{"status":"expired","endDate":"2024-06-30","daysLeft":-660,"title":"Milestone SS24","warn":true},"Gardeur G1920":{"status":"expired","endDate":"2023-12-10","daysLeft":-863,"title":"Gardeur G1920","warn":true},"Armas":{"status":"expired","endDate":"2023-10-29","daysLeft":-905,"title":"Armas Vienna","warn":true},"Monti Gürtel (ETLON Group)":{"status":"expired","endDate":"2023-08-30","daysLeft":-965,"title":"MONTI Gürtel - Brand der Woche","warn":true}};
 
 const LABELS={critical:'Kritisch',high:'Hoch',medium:'Mittel',low:'OK'};
-let curFilter='all',curSearch='',selBrand=null,curCF='all',sentLog={},lastVI=-1,curEmailText='';
+let cf='all',cs='',sel=null,ccf='all',log={},lvi=-1,cur='';
 
-const VARIANTS=[
-  (sal,brand,ctx)=>`${sal}\n\nwir schauen uns regelmäßig an, welche Marken auf B2B Connect noch mehr Sichtbarkeit verdienen – und ${brand} ist uns dabei aufgefallen.\n\n${ctx}. Genau deshalb melden wir uns heute: Wir würden ${brand} gerne in den Spotlight rücken – prominent platziert, direkt vor den Augen aktiver Einkäufer und Händler.\n\nWas das bringt? Marken, die wir featuren, verzeichnen messbar mehr Anfragen und neue Händlerkontakte. Das tracken wir aktiv und können es Euch schwarz auf weiß zeigen.\n\nWas wir dafür brauchen, ist eigentlich nur eines: ein Imagefilm oder Videomaterial, das ${brand} zum Leben bringt. Den Rest übernehmen wir.\n\nKlingt interessant? Dann schreibt uns einfach kurz zurück – wir machen es unkompliziert.\n\nHerzliche Grüße\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\nkurze Nachricht mit einem konkreten Angebot: Wir möchten ${brand} auf B2B Connect in den Spotlight rücken.\n\nB2B Connect wird täglich von Einkäufern und Händlern genutzt, die aktiv nach neuen Marken suchen. Marken, die wir featuren, verzeichnen messbar mehr Anfragen und neue Händlerkontakte – das tracken wir aktiv und können es Euch schwarz auf weiß zeigen.\n\nWir haben ${brand} im Blick, weil ${ctx}. Jetzt wäre der richtige Moment, das zu ändern.\n\nWas wir dafür brauchen, ist eigentlich nur eines: ein Imagefilm oder Videomaterial, das ${brand} zum Leben bringt. Den Rest übernehmen wir.\n\nEinfach kurz zurückschreiben – wir melden uns schnell und klären alles unkompliziert.\n\nBis bald,\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\n${brand} gehört auf die Bühne – und wir haben genau die richtige.\n\nWir haben festgestellt, dass ${ctx}. Das möchten wir gerne gemeinsam mit Euch ändern. Auf B2B Connect erreicht Ihr täglich Einkäufer und Händler, die aktiv auf der Suche sind. Marken, die bei uns featured werden, verzeichnen messbar mehr Anfragen und neue Händlerkontakte – das tracken wir aktiv und können es Euch schwarz auf weiß zeigen.\n\nWas wir dafür brauchen? Einen Imagefilm oder Videomaterial, das ${brand} zum Leben bringt. Den Rest übernehmen wir vollständig.\n\nHabt Ihr Interesse? Dann meldet Euch einfach – wir freuen uns auf den Austausch.\n\nHerzliche Grüße\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\nwir haben ${brand} auf dem Radar – und möchten Euch eine Möglichkeit vorstellen, die sich für viele unserer Partner bereits messbar ausgezahlt hat.\n\nAuf B2B Connect können wir ${brand} direkt vor die Augen von Händlern und Einkäufern bringen, die täglich aktiv nach Marken suchen. Marken, die wir featuren, verzeichnen nachweislich mehr Anfragen und neue Händlerkontakte – wir tracken das aktiv und können Euch die Zahlen zeigen.\n\nDa ${ctx}, ist jetzt ein guter Zeitpunkt, gemeinsam loszulegen. Was wir brauchen: einen Imagefilm oder hochwertiges Videomaterial, das Eure Marke zum Leben bringt. Den Rest übernehmen wir.\n\nSchreibt uns einfach kurz zurück – unkompliziert und ohne großen Aufwand.\n\nBeste Grüße\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\neine kurze, aber wichtige Nachricht: Wir würden ${brand} gerne auf B2B Connect featured sehen.\n\nUnser Tracking zeigt es deutlich – Marken, die bei uns in den Spotlight kommen, verzeichnen messbar mehr Anfragen und neue Händlerkontakte. Schwarz auf weiß, nachvollziehbar, real.\n\nWir haben geschaut, und ${ctx}. Das ist eine Chance, die wir nicht ungenutzt lassen wollen.\n\nAlles was wir brauchen: einen Imagefilm oder Videomaterial, das ${brand} zum Leben bringt. Den Rest – Platzierung, Timing, Umsetzung – übernehmen wir komplett.\n\nInteresse? Einfach kurz Bescheid geben.\n\nHerzliche Grüße\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\nwir tracken auf B2B Connect sehr genau, welche Marken gerade Aufmerksamkeit verdienen – und ${brand} steht dabei oben auf unserer Liste.\n\nDer Grund: ${ctx}. Das wollen wir gemeinsam mit Euch ändern.\n\nFeatured Brands auf unserer Plattform landen direkt im Blickfeld aktiver Einkäufer und Händler. Und die Ergebnisse sprechen für sich: messbar mehr Anfragen, neue Händlerkontakte, nachweisbar. Wir haben die Zahlen und zeigen sie Euch gerne.\n\nWas es braucht, ist eigentlich nur eines: ein Imagefilm oder Videomaterial, das ${brand} zeigt wie es ist. Den Rest übernehmen wir.\n\nMeldet Euch einfach – wir freuen uns, loszulegen.\n\nBis bald,\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\nmanchmal braucht es nur den richtigen Moment und die richtige Bühne. Für ${brand} wäre beides jetzt gegeben.\n\nWir möchten ${brand} auf B2B Connect prominent platzieren – direkt dort, wo Händler und Einkäufer täglich aktiv suchen. Was das konkret bringt: Marken, die wir featuren, verzeichnen messbar mehr Anfragen und neue Händlerkontakte. Das ist kein Bauchgefühl – wir tracken es aktiv und können Euch die Zahlen zeigen.\n\nWir haben festgestellt, dass ${ctx}. Genau deshalb melden wir uns.\n\nWas wir brauchen: einen Imagefilm oder Videomaterial, das die Persönlichkeit von ${brand} einfängt. Den Rest übernehmen wir.\n\nKlingt gut? Dann einfach kurz zurückschreiben.\n\nHerzliche Grüße\nEuer B2B Connect Team`,
-  (sal,brand,ctx)=>`${sal}\n\nwir haben eine konkrete Idee für ${brand} – und die möchten wir kurz mit Euch teilen.\n\nB2B Connect verbindet Marken täglich mit Händlern und Einkäufern, die aktiv auf der Suche sind. Unsere Featured Brands profitieren messbar: mehr Anfragen, neue Händlerkontakte – und wir tracken das aktiv, können es also schwarz auf weiß belegen.\n\n${brand} haben wir dabei besonders im Blick, denn ${ctx}. Wir sehen hier echtes Potenzial, das wir gerne gemeinsam heben würden.\n\nWas wir dafür brauchen: einen Imagefilm oder Videomaterial, das Eure Marke zum Leben bringt. Den Rest – von der Platzierung bis zur Umsetzung – übernehmen wir.\n\nHabt Ihr fünf Minuten für ein kurzes Gespräch oder einfach eine Antwort per Mail? Wir freuen uns.\n\nHerzliche Grüße\nEuer B2B Connect Team`
+const V=[
+  (sal,brand,days)=>`${sal}\nwir würden ${brand} gerne in den kommenden Wochen ein bisschen stärker auf B2B Connect promoten. ${daysCtx(brand,days)}.\n\nHabt ihr aktuelles Videomaterial oder Bildmaterial, das wir verwenden dürfen? Wir basteln da gern etwas draus – und nehmen auch gerne Input zu USPs, Kollektionsinhalten oder Vertriebsinfos, mit denen wir das redaktionell bestücken können. Den Rest übernehmen wir.\n\nBesten Dank und schöne Grüße\n${un()}`,
+  (sal,brand,days)=>`${sal}\nkurze Frage: Hätten wir von euch aktuelles Material für ${brand}? ${daysCtx(brand,days)}.\n\nWenn ihr Videoclips, Bilder oder auch einfach ein paar Stichpunkte zu USPs und Kollektionshighlights schicken könnt, legen wir gerne eine neue Promotion auf. Die Slideshow für interessierte Händler könnten wir dabei auch gleich auf Stand bringen. Den Rest machen wir.\n\nViele Grüße\n${un()}`,
+  (sal,brand,days)=>`${sal}\nwir schauen gerade, welche Marken auf B2B Connect als nächstes einen Schub vertragen könnten – und ${brand} ist dabei auf unserer Liste gelandet.\n\n${daysCtx(brand,days)}. Habt ihr aktuelles Video- oder Bildmaterial das wir nutzen dürfen? Ansonsten reichen auch Kollektionsinfos oder USPs – wir machen da was draus. Den Rest übernehmen wir komplett.\n\nSchöne Grüße\n${un()}`,
+  (sal,brand,days)=>`${sal}\nwir würden gerne ${brand} wieder etwas stärker bei B2B Connect in den Vordergrund rücken. Die Jahreszeit sollte sich gut dafür eignen.\n\n${daysCtx(brand,days)}. Habt ihr da etwas Aktuelles – Videomaterial, Bilder oder auch nur ein paar Stichpunkte zu Kollektionsinhalten und USPs? Wir nehmen das gerne als Basis. Den Rest übernehmen wir.\n\nDanke und herzliche Grüße\n${un()}`,
+  (sal,brand,days)=>`${sal}\nhaben wir ${brand} schon länger nicht mehr auf B2B Connect gehabt – das sollten wir mal wieder ändern.\n\n${daysCtx(brand,days)}. Wenn ihr aktuelles Videomaterial oder Bilder habt, schickt sie gerne rüber. Auch Infos zu Kollektionsschwerpunkten, Multiplikatoren oder Vertriebshilfen nehmen wir gerne entgegen – damit können wir das redaktionell gut aufbauen. Den Rest machen wir.\n\nViele Grüße\n${un()}`,
+  (sal,brand,days)=>`${sal}\nwir würden ${brand} gerne in Kürze neu auf B2B Connect featuren. ${daysCtx(brand,days)}.\n\nWas brauchen wir dafür? Am liebsten aktuelles Videomaterial oder gute Bilder – notfalls reichen auch Slideshow-Inhalte oder Kollektionsinfos, aus denen wir etwas bauen können. USPs, Mindestumsätze oder andere Vertriebsinfos nehmen wir ebenfalls gerne. Den Rest übernehmen wir.\n\nBesten Dank\n${un()}`,
+  (sal,brand,days)=>`${sal}\nkurze Nachricht: Wir würden ${brand} gerne als nächstes auf B2B Connect promoten. ${daysCtx(brand,days)}.\n\nHabt ihr aktuelles Material – Video, Bilder, oder einfach ein paar Kollektionsinfos und USPs? Wir basteln da gerne etwas Passendes draus und bringen auch die Händler-Slideshow bei der Gelegenheit auf Stand. Den Rest übernehmen wir komplett.\n\nSchöne Grüße\n${un()}`,
+  (sal,brand,days)=>`${sal}\n${brand} sollte auf B2B Connect mal wieder sichtbarer werden – und wir würden das gerne angehen.\n\n${daysCtx(brand,days)}. Falls ihr aktuelles Videomaterial oder Bilder habt, schickt sie gerne. Auch Stichpunkte zu USPs, Kollektionsinhalten oder Vertriebsthemen helfen uns weiter – damit können wir das Ganze redaktionell gut aufbauen. Den Rest machen wir.\n\nHerzliche Grüße\n${un()}`
 ];
 
-function pickVariant(brand,sal,ctx){
-  let i; do{i=Math.floor(Math.random()*VARIANTS.length);}while(i===lastVI&&VARIANTS.length>1);
-  lastVI=i; return VARIANTS[i](sal,brand,ctx);
+function daysCtx(brand,days){
+  if(days>=9999)return`Bislang hatten wir ${brand} noch nicht auf der Plattform`;
+  if(days>500)return`Die letzte Promotion liegt schon eine Weile zurück`;
+  if(days>180)return`Es ist jetzt einige Monate her, seit ${brand} zuletzt bei uns zu sehen war`;
+  if(days>60)return`Die letzte Kampagne ist vor ein paar Monaten ausgelaufen`;
+  return`${brand} war zuletzt vor Kurzem bei uns aktiv – ein guter Moment für eine Fortsetzung`;
 }
 
-function getUsername(){ return document.getElementById('username-input').value.trim()||'Unbekannt'; }
-function sk(b){ return 'b2bc_sent_'+b.replace(/[^a-zA-Z0-9]/g,'_'); }
+function pv(brand,sal,days){let i;do{i=Math.floor(Math.random()*V.length);}while(i===lvi&&V.length>1);lvi=i;return V[i](sal,brand,days);}
+function un(){const n=document.getElementById('uname').value.trim();return n?n+'\nB2B Connect':'Euer B2B Connect Team';}
+function sk(b){return 'b2bc:'+b.replace(/[^a-zA-Z0-9]/g,'_');}
 
-function loadSentLog(){
+function loadLog(){
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
-    if(k&&k.startsWith('b2bc_sent_')){
-      try{ sentLog[k]=JSON.parse(localStorage.getItem(k)); }catch(e){}
-    }
+    if(k&&k.startsWith('b2bc:')){try{log[k]=JSON.parse(localStorage.getItem(k));}catch(e){}}
   }
-  updateBadge(); renderBrands(); renderSent();
+  upBadge();rB();rSent();
 }
-function markSent(brand){
-  const k=sk(brand),e={brand,sentBy:getUsername(),sentAt:new Date().toISOString()};
-  sentLog[k]=e; localStorage.setItem(k,JSON.stringify(e));
-  updateBadge(); renderBrands(); renderSent();
-  if(selBrand&&selBrand.brand===brand) renderEmailPanel(selBrand);
+function markS(brand){
+  const k=sk(brand),e={brand,by:un(),at:new Date().toISOString()};
+  log[k]=e;localStorage.setItem(k,JSON.stringify(e));
+  upBadge();rB();rSent();if(sel&&sel.brand===brand)rEP(sel);
 }
-function unmarkSent(brand){
-  const k=sk(brand); delete sentLog[k]; localStorage.removeItem(k);
-  updateBadge(); renderBrands(); renderSent();
-  if(selBrand&&selBrand.brand===brand) renderEmailPanel(selBrand);
+function unmarkS(brand){
+  const k=sk(brand);delete log[k];localStorage.removeItem(k);
+  upBadge();rB();rSent();if(sel&&sel.brand===brand)rEP(sel);
 }
-function getSent(b){ return sentLog[sk(b)]||null; }
-function updateBadge(){ document.getElementById('sent-count').textContent=Object.keys(sentLog).length; }
-function fmtTs(iso){ const d=new Date(iso); return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}); }
-function fmtD(d){ if(!d)return 'Nie'; return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function firstName(email){
-  const loc=email.split('@')[0].toLowerCase(),parts=loc.split(/[\.\-_]/);
-  let n=parts[0]; if(n.length===1&&parts.length>1)n=parts[1];
+function gs(b){return log[sk(b)]||null;}
+function upBadge(){document.getElementById('sc2').textContent=Object.keys(log).length;}
+function fts(iso){const d=new Date(iso);return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});}
+function fd(d){if(!d)return'Nie';return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function fn(email){
+  const l=email.split('@')[0].toLowerCase(),p=l.split(/[\.\-_]/);
+  let n=p[0];if(n.length===1&&p.length>1)n=p[1];
   n=n.charAt(0).toUpperCase()+n.slice(1);
-  return ['info','mail','office','kontakt','contact','marketing','sales','b2b','controlling','hallo','hello','support','belladahl'].includes(n.toLowerCase())?null:n;
+  return['info','mail','office','kontakt','contact','marketing','sales','b2b','controlling','hallo','hello','support','belladahl'].includes(n.toLowerCase())?null:n;
 }
-function sal(email){ const n=firstName(email); return n?`Hallo ${n},`:'Hallo zusammen,'; }
-function ctx(b){
-  if(!b.lastCampaign&&!b.hasVideo) return `${b.brand} noch keine Promotion auf B2B Connect hatte und noch kein Imagematerial vorliegt`;
-  if(!b.lastCampaign) return `${b.brand} noch keine aktive Promotion auf B2B Connect hatte`;
-  if(!b.hasVideo) return `${b.brand} zuletzt am ${fmtD(b.lastCampaign)} auf B2B Connect zu sehen war, aber noch kein Imagefilm vorliegt`;
-  return `${b.brand} zuletzt am ${fmtD(b.lastCampaign)} auf B2B Connect präsent war`;
-}
+function sal(email){const n=fn(email);return n?`Hallo ${n},`:'Hallo zusammen,';}
 
 function switchTab(t,el){
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('act')); el.classList.add('act');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('act'));el.classList.add('act');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
   document.getElementById('page-'+t).classList.add('show');
-  if(t==='sent') renderSent();
+  if(t==='sent')rSent();
 }
-function setF(f,el){ curFilter=f; document.querySelectorAll('#page-brands .fb').forEach(b=>b.classList.remove('act')); el.classList.add('act'); renderBrands(); }
-function setS(v){ curSearch=v.toLowerCase(); renderBrands(); }
-function setCF(f,el){ curCF=f; document.querySelectorAll('#camp-filter-btns .fb').forEach(b=>b.classList.remove('act')); el.classList.add('act'); renderCampaigns(); }
-function getFiltered(){ return BRANDS.filter(b=>(curFilter==='all'||b.priority===curFilter)&&(!curSearch||b.brand.toLowerCase().includes(curSearch))); }
+function setF(f,el){cf=f;document.querySelectorAll('#page-brands .fb').forEach(b=>b.classList.remove('act'));el.classList.add('act');rB();}
+function setS(v){cs=v.toLowerCase();rB();}
+function setCF(f,el){ccf=f;document.querySelectorAll('#cfb .fb').forEach(b=>b.classList.remove('act'));el.classList.add('act');rC();}
+function gf(){return BRANDS.filter(b=>(cf==='all'||b.priority===cf)&&(!cs||b.brand.toLowerCase().includes(cs)));}
 
-function renderStats(){
-  const c={critical:0,high:0,medium:0,low:0}; BRANDS.forEach(b=>c[b.priority]++);
-  document.getElementById('stats-row').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Marken gesamt</div><div class="stat-value">${BRANDS.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Kritisch</div><div class="stat-value red">${c.critical}</div></div>
-    <div class="stat-card"><div class="stat-label">Hohe Priorität</div><div class="stat-value amber">${c.high}</div></div>
-    <div class="stat-card"><div class="stat-label">Versendet</div><div class="stat-value green">${Object.keys(sentLog).length}</div></div>`;
+function rStats(){
+  const c={critical:0,high:0,medium:0,low:0};BRANDS.forEach(b=>c[b.priority]++);
+  document.getElementById('stats').innerHTML=`
+    <div class="sc"><div class="sl">Marken gesamt</div><div class="sv">${BRANDS.length}</div></div>
+    <div class="sc"><div class="sl">Kritisch (≥5.5)</div><div class="sv red">${c.critical}</div></div>
+    <div class="sc"><div class="sl">Hoch (4.5–5.4)</div><div class="sv amber">${c.high}</div></div>
+    <div class="sc"><div class="sl">Versendet</div><div class="sv green">${Object.keys(log).length}</div></div>`;
 }
 
-function renderBrands(){
-  renderStats();
-  const fl=getFiltered();
-  document.getElementById('pcount').textContent=`${fl.length} von ${BRANDS.length}`;
-  if(!fl.length){ document.getElementById('brand-list').innerHTML='<div class="empty-state">Keine Ergebnisse</div>'; return; }
-  document.getElementById('brand-list').innerHTML=fl.map(b=>{
-    const isSel=selBrand&&selBrand.brand===b.brand,sent=getSent(b.brand);
-    const bc=b.priority==='critical'?'bc':b.priority==='high'?'bh':b.priority==='medium'?'bm':'bl';
-    return `<div class="brand-row p-${b.priority}${isSel?' sel':''}${sent?' sent-row':''}" onclick='selBrand2(${JSON.stringify(b).replace(/'/g,"\\'")})'> 
-      <div class="brand-row-main">
-        <div class="brand-row-name">${b.brand}</div>
-        <div class="brand-row-sub">${sent?'Versendet von '+sent.sentBy+' · '+fmtTs(sent.sentAt):b.email}</div>
-      </div>
-      <div class="score-chip">${b.score.toFixed(1)}</div>
-      ${sent?'<span class="sent-chip">✓ Mail raus</span>':`<span class="badge ${bc}">${LABELS[b.priority]}</span>`}
+function rB(){
+  rStats();
+  const fl=gf();
+  document.getElementById('pc').textContent=`${fl.length} von ${BRANDS.length}`;
+  if(!fl.length){document.getElementById('bl').innerHTML='<div class="es">Keine Ergebnisse</div>';return;}
+  document.getElementById('bl').innerHTML=fl.map(b=>{
+    const is=sel&&sel.brand===b.brand,s=gs(b.brand);
+    const bc=b.priority==='critical'?'bc':b.priority==='high'?'bh':b.priority==='medium'?'bm':'bl2';
+    return`<div class="brow p-${b.priority}${is?' sel':''}${s?' sent-r':''}" onclick='selB(${JSON.stringify(b).replace(/'/g,"\\'")})'> 
+      <div class="brm"><div class="brn">${b.brand}</div><div class="brs">${s?'Versendet von '+s.by+' · '+fts(s.at):b.email}</div></div>
+      <div class="chip">${b.score.toFixed(1)}</div>
+      ${s?'<span class="schip">✓ Mail raus</span>':`<span class="badge ${bc}">${LABELS[b.priority]}</span>`}
     </div>`;
   }).join('');
 }
 
-function renderEmailPanel(b){
-  const sent=getSent(b.brand),n=firstName(b.email);
-  const subj=`Einladung zur Featured-Promotion auf B2B Connect – ${b.brand}`;
-  const bc=b.priority==='critical'?'bc':b.priority==='high'?'bh':b.priority==='medium'?'bm':'bl';
-  curEmailText=pickVariant(b.brand,sal(b.email),ctx(b));
-  document.getElementById('email-panel').innerHTML=`
-    <div class="panel-header">
-      <span class="panel-title">E-Mail-Vorlage</span>
-      <span class="badge ${bc}">${LABELS[b.priority]}</span>
-    </div>
-    <div class="email-body">
-      <div class="brand-detail">
-        <div class="detail-name">${b.brand}</div>
-        <div class="detail-meta">
+function rEP(b){
+  const s=gs(b.brand),n=fn(b.email);
+  const subj=`${b.brand} – Promotion auf B2B Connect`;
+  const bc=b.priority==='critical'?'bc':b.priority==='high'?'bh':b.priority==='medium'?'bm':'bl2';
+  cur=pv(b.brand,sal(b.email),b.daysSince);
+  document.getElementById('ep').innerHTML=`
+    <div class="ph"><span class="pt">E-Mail-Vorlage</span><span class="badge ${bc}">${LABELS[b.priority]}</span></div>
+    <div class="eb">
+      <div class="bd"><div class="dn">${b.brand}</div>
+        <div class="dm2">
           <div class="dm">Score <strong>${b.score.toFixed(1)}</strong></div>
-          <div class="dm">Letzte Promo <strong>${fmtD(b.lastCampaign)}</strong></div>
+          <div class="dm">Letzte Promo <strong>${fd(b.lastCampaign)}</strong></div>
           <div class="dm">Imagefilm <strong>${b.hasVideo?'vorhanden':'fehlt'}</strong></div>
           <div class="dm">Ansprache <strong>${n?`"Hallo ${n}"`:'"Hallo zusammen"'}</strong></div>
         </div>
       </div>
-      ${sent?`<div class="sent-info">✓ Versendet von <strong>${sent.sentBy}</strong> am ${fmtTs(sent.sentAt)}</div>`:''}
+      ${s?`<div class="si2">✓ Versendet von <strong>${s.by}</strong> am ${fts(s.at)}</div>`:''}
       <div class="ef"><div class="el">An</div><div class="ev">${b.email}</div></div>
       <div class="ef"><div class="el">Betreff</div><div class="ev">${subj}</div></div>
       <div class="ef">
-        <div class="el"><span>Nachricht</span><button class="regen-btn" onclick="regen()">↻ Neu generieren</button></div>
-        <div class="email-text" id="etxt">${curEmailText}</div>
+        <div class="el"><span>Nachricht</span><button class="rb" onclick="regen()">↻ Neu generieren</button></div>
+        <div class="et" id="etxt">${cur}</div>
       </div>
-      <div class="action-row">
-        <button class="copy-btn" id="cbtn" onclick="copyIt()">E-Mail kopieren</button>
-        <button class="sent-btn${sent?' marked':''}" id="sbtn" onclick="${sent?`unmarkSent2('${b.brand.replace(/'/g,"\\'")}')` : `markSent2('${b.brand.replace(/'/g,"\\'")}')` }">${sent?'✓ Als versendet markiert':'Als versendet markieren'}</button>
+      <div class="ar">
+        <button class="cb" id="cbtn" onclick="copyIt()">E-Mail kopieren</button>
+        <button class="sb${s?' mk':''}" onclick="${s?`unmarkS2('${b.brand.replace(/'/g,"\\'")}')` : `markS2('${b.brand.replace(/'/g,"\\'")}')` }">${s?'✓ Als versendet markiert':'Als versendet markieren'}</button>
       </div>
     </div>`;
 }
 
-function selBrand2(b){ selBrand=b; renderBrands(); renderEmailPanel(b); }
-function markSent2(brand){ markSent(brand); }
-function unmarkSent2(brand){ unmarkSent(brand); }
-function regen(){
-  if(!selBrand)return;
-  curEmailText=pickVariant(selBrand.brand,sal(selBrand.email),ctx(selBrand));
-  const el=document.getElementById('etxt'); if(el) el.textContent=curEmailText;
-}
+function selB(b){sel=b;rB();rEP(b);}
+function markS2(brand){markS(brand);}
+function unmarkS2(brand){unmarkS(brand);}
+function regen(){if(!sel)return;cur=pv(sel.brand,sal(sel.email),sel.daysSince);const e=document.getElementById('etxt');if(e)e.textContent=cur;}
 function copyIt(){
-  const subj=`Einladung zur Featured-Promotion auf B2B Connect – ${selBrand.brand}`;
-  navigator.clipboard.writeText(`An: ${selBrand.email}\nBetreff: ${subj}\n\n${curEmailText}`).then(()=>{
-    const b=document.getElementById('cbtn'); b.textContent='Kopiert!'; b.classList.add('ok');
+  const subj=`${sel.brand} – Promotion auf B2B Connect`;
+  navigator.clipboard.writeText(`An: ${sel.email}\nBetreff: ${subj}\n\n${cur}`).then(()=>{
+    const b=document.getElementById('cbtn');b.textContent='Kopiert!';b.classList.add('ok');
     setTimeout(()=>{b.textContent='E-Mail kopieren';b.classList.remove('ok');},2000);
   });
 }
 
-function renderSent(){
-  const entries=Object.values(sentLog).sort((a,b)=>new Date(b.sentAt)-new Date(a.sentAt));
-  if(!entries.length){ document.getElementById('sent-list').innerHTML='<div class="empty-state">Noch keine E-Mails als versendet markiert.</div>'; return; }
-  document.getElementById('sent-list').innerHTML=entries.map(e=>`
-    <div class="camp-card c-active">
-      <div class="camp-row1"><div class="camp-brand">${e.brand}</div><span class="camp-status cs-active">✓ Versendet</span></div>
-      <div class="camp-dates">Von <span>${e.sentBy}</span> &nbsp;·&nbsp; Am <span>${fmtTs(e.sentAt)}</span></div>
-    </div>`).join('');
+function rSent(){
+  const e=Object.values(log).sort((a,b)=>new Date(b.at)-new Date(a.at));
+  if(!e.length){document.getElementById('sent-list').innerHTML='<div class="es">Noch keine E-Mails als versendet markiert.</div>';return;}
+  document.getElementById('sent-list').innerHTML=e.map(e=>`
+    <div class="cc ca"><div class="cr"><div class="cb2">${e.brand}</div><span class="cs2 csa">✓ Versendet</span></div>
+    <div class="cd">Von <span>${e.by}</span> &nbsp;·&nbsp; Am <span>${fts(e.at)}</span></div></div>`).join('');
 }
 
-function renderCampaigns(){
+function rC(){
   const entries=Object.entries(CAMPAIGNS);
-  document.getElementById('warn-count').textContent=entries.filter(([,c])=>c.warn).length;
-  const soonEnd=entries.filter(([,c])=>c.status==='active'&&c.warn);
-  const expired=entries.filter(([,c])=>c.status==='expired');
-  let parts=[];
-  if(soonEnd.length) parts.push(`<strong>${soonEnd.length} aktive Kampagne</strong> läuft in ≤14 Tagen aus – keine Folgekampagne geplant`);
-  if(expired.length) parts.push(`<strong>${expired.length} Marken</strong> ohne aktive oder geplante Kampagne`);
-  document.getElementById('warn-banner').innerHTML=`<span style="font-size:14px">⚠</span><div class="warn-text">${parts.join(' · ')}</div>`;
+  document.getElementById('wc').textContent=entries.filter(([,c])=>c.warn).length;
+  const se=entries.filter(([,c])=>c.status==='active'&&c.warn);
+  const ex=entries.filter(([,c])=>c.status==='expired');
+  let p=[];
+  if(se.length)p.push(`<strong>${se.length} aktive Kampagne</strong> läuft in ≤14 Tagen aus – keine Folgekampagne geplant`);
+  if(ex.length)p.push(`<strong>${ex.length} Marken</strong> ohne aktive oder geplante Kampagne`);
+  document.getElementById('wb').innerHTML=`<span style="font-size:14px">⚠</span><div class="wt">${p.join(' · ')}</div>`;
   let fl=entries;
-  if(curCF==='warn') fl=entries.filter(([,c])=>c.warn);
-  else if(curCF==='active') fl=entries.filter(([,c])=>c.status==='active');
-  else if(curCF==='expired') fl=entries.filter(([,c])=>c.status==='expired');
-  fl.sort(([,a],[,b])=>{ if(a.status==='active'&&b.status!=='active')return -1; if(b.status==='active'&&a.status!=='active')return 1; return b.daysLeft-a.daysLeft; });
+  if(ccf==='warn')fl=entries.filter(([,c])=>c.warn);
+  else if(ccf==='active')fl=entries.filter(([,c])=>c.status==='active');
+  else if(ccf==='expired')fl=entries.filter(([,c])=>c.status==='expired');
+  fl.sort(([,a],[,b])=>{if(a.status==='active'&&b.status!=='active')return -1;if(b.status==='active'&&a.status!=='active')return 1;return b.daysLeft-a.daysLeft;});
   document.getElementById('camp-list').innerHTML=fl.map(([brand,c])=>{
     let cc,bc,bt,di;
-    if(c.status==='active'&&c.warn){cc='camp-card c-soon';bc='camp-status cs-warn';bt=`Endet in ${c.daysLeft} Tag${c.daysLeft===1?'':'en'}`;di=`Läuft bis <span>${fmtD(c.endDate)}</span>`;}
-    else if(c.status==='active'){cc='camp-card c-active';bc='camp-status cs-active';bt=`Aktiv · noch ${c.daysLeft} Tage`;di=`Läuft bis <span>${fmtD(c.endDate)}</span>`;}
-    else{cc='camp-card c-expired';bc='camp-status cs-expired';const ago=Math.abs(c.daysLeft);bt=`Abgelaufen · vor ${ago} Tag${ago===1?'':'en'}`;di=`Zuletzt aktiv am <span>${fmtD(c.endDate)}</span>`;}
-    return `<div class="${cc}"><div class="camp-row1"><div class="camp-brand">${brand}</div><span class="${bc}">${bt}</span></div><div class="camp-title">${c.title}</div><div class="camp-dates">${di}</div></div>`;
+    if(c.status==='active'&&c.warn){cc='cc cs';bc='cs2 csw';bt=`Endet in ${c.daysLeft} Tag${c.daysLeft===1?'':'en'}`;di=`Läuft bis <span>${fd(c.endDate)}</span>`;}
+    else if(c.status==='active'){cc='cc ca';bc='cs2 csa';bt=`Aktiv · noch ${c.daysLeft} Tage`;di=`Läuft bis <span>${fd(c.endDate)}</span>`;}
+    else{cc='cc ce';bc='cs2 cse';const ago=Math.abs(c.daysLeft);bt=`Abgelaufen · vor ${ago} Tag${ago===1?'':'en'}`;di=`Zuletzt aktiv am <span>${fd(c.endDate)}</span>`;}
+    return`<div class="${cc}"><div class="cr"><div class="cb2">${brand}</div><span class="${bc}">${bt}</span></div><div class="ct">${c.title}</div><div class="cd">${di}</div></div>`;
   }).join('');
 }
 
-loadSentLog();
-renderCampaigns();
+loadLog();rC();
 </script>
 </body>
 </html>
